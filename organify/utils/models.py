@@ -3,6 +3,7 @@
 # Django
 from django.db import models
 
+
 class OrganifyBaseModel(models.Model):
     '''Organify base abstract model.
     This will be the base that other project models will inherit. 
@@ -17,7 +18,7 @@ class OrganifyBaseModel(models.Model):
 
     class Meta:
         '''Meta options.'''
-
+        
         abstract = True
         get_latest_by = 'created'
         ordering = ['-created', '-modified']
