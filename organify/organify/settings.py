@@ -30,9 +30,12 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
 ]
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    'rest_framework',
+    'rest_framework.authtoken',
+]
 LOCAL_APPS = [
-    'users.apps.UsersAppConfig',
+    'users',
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -115,3 +118,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Django REST Framework
+# REST_FRAMEWORK = {
+#     'DEFAULT_RENDERER_CLASSES': (
+#         'rest_framework.renderers.JSONRenderer',
+#     ),
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.TokenAuthentication',
+#     )
+# }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
