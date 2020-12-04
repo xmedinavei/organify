@@ -17,6 +17,8 @@ class User(AbstractUser):
                                    help_text='Object datetime when created.')
     modified = models.DateTimeField(auto_now=True,
                                     help_text='Object datetime when modified.')
+    is_admin = models.BooleanField(default=False,
+                                   help_text='Superusers can change this to True by django admin.')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
