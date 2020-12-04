@@ -41,7 +41,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['delete'])
     def delete(self, request):
-        '''Inactive user account'''
+        '''Inactive group account'''
         group_name = request.data['name']
         slug = request.data['slug']
         group = Group.objects.get(slug=slug)
@@ -51,6 +51,7 @@ class GroupViewSet(viewsets.ModelViewSet):
             'Deleted': f'Name: {group_name} Slug: {slug}'
         }
         return Response(data, status=status.HTTP_200_OK)
+
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
