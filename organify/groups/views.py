@@ -17,14 +17,15 @@ from .permissions import IsGroupAdmin
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    '''Group view set. We can Create, delete, update groups.'''
+    '''Group view set. We can Create, update and delete groups.'''
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     lookup_field = 'slug'
     ordering = ('-modified', '-created')
 
     def get_permissions(self):
-        '''Must be authenticated to perform any view here.'''
+        '''Must be authenticated to perform any view here,
+        but only group admins can update and delete.'''
         permissions = [IsAuthenticated]
         if self.action in ['update', 'partial_update', 'destroy', 'delete']:
             permissions.append(IsGroupAdmin)
@@ -55,4 +56,5 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer
