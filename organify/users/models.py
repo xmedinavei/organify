@@ -30,7 +30,7 @@ class User(AbstractUser):
     def __str__(self):
         '''Return id, email, first_name and last_name.'''
 
-        to_show = f'{self.id}, {self.email}, {self.username}, {self.first_name} {self.last_name}'
+        to_show = f'userid {self.id}, {self.email}, {self.username}, {self.first_name} {self.last_name}'
         return to_show
 
     def get_short_name(self):
