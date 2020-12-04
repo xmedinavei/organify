@@ -1,15 +1,16 @@
 '''Groups viewsets.'''
 
-# Django REST Framework
+# DRF
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.generics import get_object_or_404
 
 # Models
 from .models import Group, Membership
 
 # Serializers
-from .serializers import GroupSerializer, MembershipSerializer
+from .serializers import GroupModelSerializer, MembershipModelSerializer
 
 # Permissions
 from rest_framework.permissions import IsAuthenticated
@@ -19,7 +20,7 @@ from .permissions import IsGroupAdmin
 class GroupViewSet(viewsets.ModelViewSet):
     '''Group view set. We can Create, update and delete groups.'''
     queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+    serializer_class = GroupModelSerializer
     lookup_field = 'slug'
     ordering = ('-modified', '-created')
 
@@ -56,5 +57,33 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
-    queryset = Membership.objects.all()
-    serializer_class = MembershipSerializer
+    '''Groups memberships. To view, add or leave groups.'''
+
+    serializer_class = MembershipModelSerializer
+
+    def dispatch(self, request, *args, **kwargs):
+        '''Get the group slug from the URL and put it to the attributes.'''
+        # import pdb; pdb.set_trace()
+        slug = kwargs['slug']
+        self.group = get_object_or_404(Group, slug=slug)
+        return super(MembershipViewSet, self).dispatch(request, *args, **kwargs)
+
+    def get_permissions(self):
+        '''Must be authenticated for view, join or leave groups.'''
+        permissions = [IsAuthenticated]
+        return [permission() for permission in permissions]
+
+    def get_queryset(self):
+        '''Return group members.'''
+        return Membership.objects.filter(group=self.group)
+
+    def create(self, request, *args, **kwargs):
+
+        user = self.request.user
+        group = self.group # comming from dispatcher method
+        membership = Membership(user=user, group=group)
+        membership.save()
+        # import pdb; pdb.set_trace()
+        serializer = MembershipModelSerializer(membership)
+        data = serializer.data
+        return Response(data, status=status.HTTP_201_CREATED)

@@ -6,7 +6,11 @@ from rest_framework import serializers
 # Model
 from .models import Group, Membership
 
-class GroupSerializer(serializers.ModelSerializer):
+# Serializers
+from users.serializers import UserModelSerializer
+
+
+class GroupModelSerializer(serializers.ModelSerializer):
     '''Group serilizer to create groups.'''
 
     class Meta:
@@ -15,10 +19,13 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ('id','name', 'slug', 'description', 'picture')
 
 
-class MembershipSerializer(serializers.ModelSerializer):
+class MembershipModelSerializer(serializers.ModelSerializer):
     '''Membership serializer to add members to a group.'''
+
+    user = UserModelSerializer(read_only=True)
+    group = GroupModelSerializer(read_only=True)
 
     class Meta:
         '''Meta options.''' 
         model = Membership
-        fields = ('id', 'user', 'group')
+        fields = ('id', 'user', 'group', 'joined')
