@@ -78,7 +78,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
         return Membership.objects.filter(group=self.group)
 
     def create(self, request, *args, **kwargs):
-
+        '''Join group.'''
         user = self.request.user
         group = self.group # comming from dispatcher method
         membership = Membership(user=user, group=group)
