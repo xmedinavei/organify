@@ -13,13 +13,20 @@ class Group(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField(unique=True,
                             max_length=50)
-    description = models.CharField(max_length=250)
+    description = models.CharField(max_length=250,
+                                   blank=True)
     picture = models.ImageField(upload_to='circles/pictures',
                                 blank=True,
                                 null=True)
     members = models.ManyToManyField('users.User',
                                      through='groups.Membership',
                                      through_fields=('group', 'user'))
+
+    def __str__(self):
+        group_name = f'{self.name}, {self.slug}'
+        return group_name
+    
+    
     
 class Membership(models.Model):
     '''Membership model.
@@ -31,3 +38,7 @@ class Membership(models.Model):
     group = models.ForeignKey('groups.Group', 
                               on_delete=models.CASCADE)
     joined = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        membership_name = f'User: {self.user} | Group: {self.group} | Joined: {self.joined}'
+        return membership_name
