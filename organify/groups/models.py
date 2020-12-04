@@ -21,6 +21,10 @@ class Group(models.Model):
     members = models.ManyToManyField('users.User',
                                      through='groups.Membership',
                                      through_fields=('group', 'user'))
+    created = models.DateTimeField(auto_now_add=True,
+                                   help_text='Object datetime when created.')
+    modified = models.DateTimeField(auto_now=True,
+                                    help_text='Object datetime when someone.')
 
     def __str__(self):
         group_name = f'{self.name}, {self.slug}'
@@ -32,13 +36,15 @@ class Membership(models.Model):
     '''Membership model.
     Show the user and group relationship and the datetime joined.
     '''
-    
     user = models.ForeignKey('users.User', 
                              on_delete=models.CASCADE)
     group = models.ForeignKey('groups.Group', 
                               on_delete=models.CASCADE)
     joined = models.DateTimeField(auto_now_add=True)
+    is_admin = models.BooleanField(default=False,
+                                   help_text='Group admin')
 
     def __str__(self):
+        '''Return full membership info.'''
         membership_name = f'User: {self.user} | Group: {self.group} | Joined: {self.joined}'
         return membership_name

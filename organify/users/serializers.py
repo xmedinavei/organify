@@ -19,13 +19,7 @@ class UserModelSerializer(serializers.ModelSerializer):
         '''Meta class.'''
 
         model = User
-        fields = (
-            'email',
-            'username',
-            'first_name',
-            'last_name',
-            # 'profile'
-        )
+        fields = ('id', 'email', 'username', 'first_name', 'last_name')
 
 
 class UserSignUpSerializer(serializers.Serializer):
