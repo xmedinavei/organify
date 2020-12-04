@@ -5,29 +5,37 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-# Permissions
-from rest_framework.permissions import IsAuthenticated, AllowAny
-
 # Serializers
-from .serializers import (
-    UserModelSerializer,
-    UserSignUpSerializer,
-    UserLoginSerializer,
-    # ProfileModelSerializer,
-)
+from .serializers import UserModelSerializer, UserSignUpSerializer, UserLoginSerializer
 
 # Models
 from .models import User
 
+# Permissions
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from .permissions import IsAccountOwner
+
+
 class UserViewSet(viewsets.ModelViewSet):
     '''
     User model view set. 
-    For sign up, login and delete account.
+    For sign up, login, update and delete account.
     '''
 
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserModelSerializer
     lookup_field = 'username'
+
+    def get_permissions(self):
+        """Assign permissions based on action."""
+        if self.action in ['signup', 'login']:
+            permissions = [AllowAny]
+        elif self.action in ['retrieve', 'update', 'partial_update', 'delete']:
+            permissions = [IsAuthenticated, IsAccountOwner]
+        else:
+            permissions = [IsAuthenticated]
+        return [p() for p in permissions]
+
 
     # URL: users/signup/
     @action(detail=False, methods=['post'])
@@ -50,19 +58,5 @@ class UserViewSet(viewsets.ModelViewSet):
         data = {
             'user': UserModelSerializer(user).data,
             'access_token': token,
-        }
-        return Response(data, status=status.HTTP_200_OK)
-
-    # URL: users/delete/
-    @action(detail=False, methods=['delete'])
-    def delete(self, request):
-        '''Inactive user account'''
-        serializer = UserLoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = User.objects.get(email=serializer.data['email'])
-        user.delete()
-        # import pdb; pdb.set_trace()
-        data = {
-            'user': UserModelSerializer(user).data
         }
         return Response(data, status=status.HTTP_200_OK)
