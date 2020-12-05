@@ -70,7 +70,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
         return super(MembershipViewSet, self).dispatch(request, *args, **kwargs)
 
     def get_permissions(self):
-        '''Must be authenticated for view, join or leave groups.'''
+        '''Must be authenticated for view, add, join or leave groups.'''
         permissions = [IsAuthenticated]
         return [permission() for permission in permissions]
 
