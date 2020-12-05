@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 
 # Models
+from users.models import User
 from .models import Group, Membership
 
 # Serializers
@@ -87,3 +88,17 @@ class MembershipViewSet(viewsets.ModelViewSet):
         serializer = MembershipModelSerializer(membership)
         data = serializer.data
         return Response(data, status=status.HTTP_201_CREATED)
+
+    # POST /membership/<group_slug>/add_many_members/
+    @action(detail=False, methods=['post'])
+    def add_many_members(self, request, *args, **kwargs):
+        '''Add members to a group by parsing a list of users ids.'''
+        uid_list = request.data['id']
+        group = self.group # Comming from dispatcher
+        membership_list = []
+        # import pdb; pdb.set_trace()
+        for uid in uid_list:
+            user = User.objects.get(id=uid)
+            membership_list.append(Membership(user=user, group=group))
+        Membership.objects.bulk_create(membership_list)
+        return Response(status=status.HTTP_201_CREATED)
