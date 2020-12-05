@@ -37,7 +37,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return [p() for p in permissions]
 
 
-    # URL: users/signup/
+    # POST users/signup/
     @action(detail=False, methods=['post'])
     def signup(self, request):
         '''User sign up view using the UserSignUpSerializer.'''
@@ -48,7 +48,7 @@ class UserViewSet(viewsets.ModelViewSet):
         
         return Response(data, status=status.HTTP_201_CREATED)
 
-    # URL: users/login/
+    # POST users/login/
     @action(detail=False, methods=['post'])
     def login(self, request):
         '''User login.'''
