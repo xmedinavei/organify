@@ -31,7 +31,7 @@ class GroupModelSerializer(serializers.ModelSerializer):
         superusers = User.objects.filter(is_superuser=True)
         # import pdb; pdb.set_trace()
         subject = 'A new group have been created!'
-        content = f'A group called {group.name} have been created.'
+        content = f'A group called "{group.name}" have been created.'
         from_email = 'noreply@organify.com'
         to_email = [su.email for su in superusers]
         msg = EmailMultiAlternatives(subject, content, from_email, to_email)
