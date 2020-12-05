@@ -55,5 +55,5 @@ class Membership(models.Model):
 
     def __str__(self):
         '''Return full membership info.'''
-        membership_name = f'User: {self.user} | Group: {self.group} | Joined: {self.joined}'
+        membership_name = f'Membership id {id} | User: {self.user} | Group: {self.group} | Joined: {self.joined}'
         return membership_name

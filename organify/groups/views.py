@@ -102,3 +102,13 @@ class MembershipViewSet(viewsets.ModelViewSet):
             membership_list.append(Membership(user=user, group=group))
         Membership.objects.bulk_create(membership_list)
         return Response(status=status.HTTP_201_CREATED)
+
+    #GET /memberships/<group_slug>/members/
+    @action(detail=False, methods=['get'])
+    def members(self, request, *args, **kwargs):
+        # import pdb; pdb.set_trace()
+        group = self.group # Comming from dispatcher
+        memberships = Membership.objects.filter(group__slug=group.slug)
+        serializer = MembershipModelSerializer(memberships, many=True)
+        data = serializer.data
+        return Response(data)
