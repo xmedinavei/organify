@@ -18,6 +18,10 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import IsGroupAdmin
 
 
+import base64
+import pathlib
+
+
 class GroupViewSet(viewsets.ModelViewSet):
     '''Group view set. We can Create, update and delete groups.'''
     queryset = Group.objects.all()
@@ -54,6 +58,54 @@ class GroupViewSet(viewsets.ModelViewSet):
             'Deleted': f'Name: {group_name} Slug: {slug}'
         }
         return Response(data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['patch'])
+    def upload_pic(self, request):
+
+
+        slug = request.data['slug']
+        group = Group.objects.get(slug=slug)
+
+
+        ext = pathlib.Path(request.FILES['picture'].name).suffix
+        ext_final = ext[1:]
+
+        image_file = request.FILES['picture'].open("rb") 
+        encoded_string = base64.b64encode(image_file.read())
+        string_img = str(encoded_string)
+        header_encode = 'data:image/'+ ext_final +';base64,'
+
+        string_img_new = header_encode + string_img[2:-1]
+
+        group.pic = string_img_new
+        group.save()
+
+        return Response(status=status.HTTP_200_OK)
+    
+
+    @action(detail=False, methods=['get'])
+    def download_pic(self, request):
+
+        pic_bs64 = Groups.objects.get(slug='bestbest').pic
+
+        # Quitr headeradn save string
+
+        ext = pathlib.Path(request.FILES['picture'].name).suffix
+        ext_final = ext[1:]
+
+        image_file = request.FILES['picture'].open("rb") 
+        encoded_string = base64.b64decode(pic_bas4)
+        string_img = str(encoded_string)
+        header_encode = 'data:image/'+ ext_final +';base64,'
+
+        string_img_new = header_encode + string_img[2:-1]
+
+        '''Save to DB'''
+
+        # import pdb; pdb.set_trace()
+
+        return Response(status=status.HTTP_200_OK)
+
 
 
 

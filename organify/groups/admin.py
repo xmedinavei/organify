@@ -9,7 +9,7 @@ from .models import Group, Membership
 class GroupAdmin(admin.ModelAdmin):
     '''Group admin.'''
     list_display = ('id', 'name', 'slug', 'description', 
-                    'picture', 'created', 'modified')
+                    'picture', 'pic', 'created', 'modified')
 
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):

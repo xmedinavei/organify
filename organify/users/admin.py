@@ -16,3 +16,8 @@ class CustomUserAdmin(UserAdmin):
     ordering = ['-id']
 
 admin.site.register(User, CustomUserAdmin)
+
+# class CustomUserInline(admin.TabularInline):
+#     model = User
+
+# admin.site.register(CustomUserInline)

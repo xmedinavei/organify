@@ -17,6 +17,7 @@ class Group(models.Model):
     picture = models.ImageField(upload_to='circles/pictures',
                                 blank=True,
                                 null=True)
+    pic = models.TextField(null=True)
     members = models.ManyToManyField('users.User',
                                      through='groups.Membership',
                                      through_fields=('group', 'user'))
