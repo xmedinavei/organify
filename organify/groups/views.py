@@ -62,21 +62,20 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['patch'])
     def upload_pic(self, request):
 
-
+        # Getting group instance
         slug = request.data['slug']
         group = Group.objects.get(slug=slug)
 
-
+        # Encoding
         ext = pathlib.Path(request.FILES['picture'].name).suffix
         ext_final = ext[1:]
-
         image_file = request.FILES['picture'].open("rb") 
         encoded_string = base64.b64encode(image_file.read())
         string_img = str(encoded_string)
         header_encode = 'data:image/'+ ext_final +';base64,'
-
         string_img_new = header_encode + string_img[2:-1]
 
+        # Saving to DB
         group.pic = string_img_new
         group.save()
 
