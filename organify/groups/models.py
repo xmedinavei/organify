@@ -2,6 +2,7 @@
 
 # Django
 from django.db import models
+from django.utils.html import format_html
 
 
 class Group(models.Model):
@@ -14,9 +15,6 @@ class Group(models.Model):
                             max_length=50)
     description = models.CharField(max_length=250,
                                    blank=True)
-    picture = models.ImageField(upload_to='circles/pictures',
-                                blank=True,
-                                null=True)
     pic = models.TextField(null=True)
     members = models.ManyToManyField('users.User',
                                      through='groups.Membership',
@@ -35,6 +33,10 @@ class Group(models.Model):
         '''Return group name and the slug.'''
         group_name = f'{self.name}, {self.slug}'
         return group_name
+
+    def pic_render(self):
+        '''Render the pic in Django admin.'''
+        return format_html('<img src={}>', self.pic)
     
     
     

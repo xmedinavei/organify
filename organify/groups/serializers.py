@@ -29,7 +29,6 @@ class GroupModelSerializer(serializers.ModelSerializer):
     def send_email_to_superusers(self, group):
         '''Send email to superusers when a group is created.'''
         superusers = User.objects.filter(is_superuser=True)
-        # import pdb; pdb.set_trace()
         subject = 'A new group have been created!'
         content = f'A group called "{group.name}" have been created.'
         from_email = 'noreply@organify.com'
@@ -42,7 +41,6 @@ class GroupModelSerializer(serializers.ModelSerializer):
 
 class MembershipModelSerializer(serializers.ModelSerializer):
     '''Membership serializer to add members to a group.'''
-
     user = UserModelSerializer(read_only=True)
     group = GroupModelSerializer(read_only=True)
 

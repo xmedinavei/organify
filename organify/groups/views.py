@@ -17,7 +17,7 @@ from .serializers import GroupModelSerializer, MembershipModelSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsGroupAdmin
 
-
+# Utils
 import base64
 import pathlib
 
@@ -40,27 +40,31 @@ class GroupViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         '''The user who create the group is group admin.'''
         group = serializer.save()
-        # import pdb; pdb.set_trace()
         user = self.request.user
         Membership.objects.create(user=user,
                                   group=group,
                                   is_admin=True)
 
+    # DELETE /groups/delete/
     @action(detail=False, methods=['delete'])
     def delete(self, request):
-        '''Inactive group account'''
+        '''Delete group account. 
+        We send the name and the slug as a JSON.'''
         group_name = request.data['name']
         slug = request.data['slug']
         group = Group.objects.get(slug=slug)
         group.delete()
-        # import pdb; pdb.set_trace()
         data = {
             'Deleted': f'Name: {group_name} Slug: {slug}'
         }
         return Response(data, status=status.HTTP_200_OK)
 
+    # PATCH /groups/upload_pic/
     @action(detail=False, methods=['patch'])
     def upload_pic(self, request):
+        '''Upload an image as a file, transform it to a base64
+        and save it to intance pic.
+        We send the file and the group slug.'''
 
         # Getting group instance
         slug = request.data['slug']
@@ -78,39 +82,18 @@ class GroupViewSet(viewsets.ModelViewSet):
         # Saving to DB
         group.pic = string_img_new
         group.save()
-
         return Response(status=status.HTTP_200_OK)
     
 
     @action(detail=False, methods=['get'])
-    def download_pic(self, request):
-
+    def view_pic(self, request):
         pic_bs64 = Groups.objects.get(slug='bestbest').pic
-
-        # Quitr headeradn save string
-
-        ext = pathlib.Path(request.FILES['picture'].name).suffix
-        ext_final = ext[1:]
-
-        image_file = request.FILES['picture'].open("rb") 
-        encoded_string = base64.b64decode(pic_bas4)
-        string_img = str(encoded_string)
-        header_encode = 'data:image/'+ ext_final +';base64,'
-
-        string_img_new = header_encode + string_img[2:-1]
-
-        '''Save to DB'''
-
-        # import pdb; pdb.set_trace()
-
+        # Render the pic as <img src=pic_bs64/>
         return Response(status=status.HTTP_200_OK)
-
-
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
     '''Groups memberships. To view, add or leave groups.'''
-
     serializer_class = MembershipModelSerializer
 
     def dispatch(self, request, *args, **kwargs):
@@ -147,7 +130,6 @@ class MembershipViewSet(viewsets.ModelViewSet):
         uid_list = request.data['id']
         group = self.group # Comming from dispatcher
         membership_list = []
-        # import pdb; pdb.set_trace()
         for uid in uid_list:
             user = User.objects.get(id=uid)
             membership_list.append(Membership(user=user, group=group))
@@ -157,7 +139,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     #GET /memberships/<group_slug>/members/
     @action(detail=False, methods=['get'])
     def members(self, request, *args, **kwargs):
-        # import pdb; pdb.set_trace()
+        '''See all group members.'''
         group = self.group # Comming from dispatcher
         memberships = Membership.objects.filter(group__slug=group.slug)
         serializer = MembershipModelSerializer(memberships, many=True)
