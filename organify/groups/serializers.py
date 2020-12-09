@@ -19,7 +19,7 @@ class GroupModelSerializer(serializers.ModelSerializer):
     class Meta:
         '''Meta options.''' 
         model = Group
-        fields = ('id','name', 'slug', 'description', 'picture', 'pic')
+        fields = ('id','name', 'slug', 'description', 'pic')
 
     def create(self, data):
         group = Group.objects.create(**data)
